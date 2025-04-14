@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ProcessosThreads</string>
+    <string name="download_imagem">Download Imagem</string>
+    <string name="link_imagem">Link da imagem</string>
+    <string name="upload">➤</string>
+    <string name="imagem_baixada">Imagem baixada</string>
+</resources>
