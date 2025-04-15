@@ -1,5 +1,7 @@
 package com.example.processosthreads;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -13,6 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -43,9 +50,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         String imgUrl = edtImageLink.getText().toString();
         if(!imgUrl.isEmpty()){
+            imgDownloaded.setVisibility(View.INVISIBLE);
+            pgbLoading.setVisibility(View.VISIBLE);
 
+            try {
+                URL url = new URL(imgUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+                imgDownloaded.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }else {
-            //  Optionally, show a Toast or Snackbar to inform the user to enter a URL
+            imgDownloaded.setVisibility(View.VISIBLE);
+            pgbLoading.setVisibility(View.INVISIBLE);
         }
+        imgDownloaded.setVisibility(View.VISIBLE);
+        pgbLoading.setVisibility(View.INVISIBLE);
     }
 }
