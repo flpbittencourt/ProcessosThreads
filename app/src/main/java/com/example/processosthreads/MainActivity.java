@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,7 +23,6 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText edtImageLink;
-    private Button btnDownload;
     private ProgressBar pgbLoading;
     private ImageView imgDownloaded;
 
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         edtImageLink = findViewById(R.id.edtImageLink);
         pgbLoading = findViewById(R.id.pgbLoading);
         imgDownloaded = findViewById(R.id.imgDownloaded);
-        btnDownload = findViewById(R.id.btnDownload);
+        Button btnDownload = findViewById(R.id.btnDownload);
         btnDownload.setOnClickListener(this);
     }
 
@@ -52,25 +50,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!imgUrl.isEmpty()){
             imgDownloaded.setVisibility(View.INVISIBLE);
             pgbLoading.setVisibility(View.VISIBLE);
-
-            try {
-                URL url = new URL(imgUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(input);
-                input.close();
-                imgDownloaded.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
+            executarDownload(imgUrl);
         }else {
-            imgDownloaded.setVisibility(View.VISIBLE);
-            pgbLoading.setVisibility(View.INVISIBLE);
+            //null
         }
-        imgDownloaded.setVisibility(View.VISIBLE);
-        pgbLoading.setVisibility(View.INVISIBLE);
+    }
+
+    private void executarDownload(String imgUrl) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(imgUrl);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(input);
+                    input.close();
+                    imgDownloaded.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 }
