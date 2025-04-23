@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pgbLoading.setVisibility(View.VISIBLE);
             executarDownload(imgUrl);
         }else {
-            //null
+            Toast.makeText(MainActivity.this, R.string.no_url, Toast.LENGTH_SHORT).show();
         }
     }
 
