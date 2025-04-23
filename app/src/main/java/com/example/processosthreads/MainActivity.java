@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
+        //Atribuindo os ids dos componentes visuais às respectivas variáveis
         edtImageLink = findViewById(R.id.edtImageLink);
         pgbLoading = findViewById(R.id.pgbLoading);
         imgDownloaded = findViewById(R.id.imgDownloaded);
@@ -56,8 +57,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //Function para gerenciar o carregamento da imagem via link, bem como ativação da progress bar enquanto a imagem é carregada
     private void executarDownload(String imgUrl) {
+
         new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmap = null;
+                try {
+                    //Realiza o download da imagem ná varrável bitmap
+                    InputStream in = new URL(imgUrl).openStream();
+                    bitmap = BitmapFactory.decodeStream(in);
+                    in.close();
+
+                    //Atualiza a UI para que imgDownloaded receba o bitmap da URL e se torne visível
+                    //Atualiza o progressLoadring para que não seja mais carregado
+                    final Bitmap finalBitmap = bitmap;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imgDownloaded.setImageBitmap(finalBitmap);
+                            imgDownloaded.setVisibility(View.VISIBLE);
+                            pgbLoading.setVisibility(View.GONE);
+                        }
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //Tratador da exceção
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pgbLoading.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        }).start();
+
+        //Código imcompleto - Teste função de carregamento do bitmap [NOK]
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -73,6 +112,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     throw new RuntimeException(e);
                 }
             }
-        }).start();
+        }).start();*/
     }
 }
